@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Food Menu</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Food Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+
+        <tbody id="foodTable">
+            <tr>
+                <td colspan="3">Loading food items...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch all food items from the backend.
+        fetch("/foods")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch food items");
+                }
+                return response.json();
+            })
+            .then(foods => {
+                console.log("Food items received:", foods);
+
+                // Get the table body.
+                const table = document.getElementById("foodTable");
+
+                // Clear the loading message.
+                table.innerHTML = "";
+
+                // Display each food item in the table.
+                foods.forEach(food => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${food.id}</td>
+                        <td>${food.name}</td>
+                        <td>$${food.price.toFixed(2)}</td>
+                    `;
+
+                    table.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("Error loading food items:", error);
+
+                document.getElementById("foodTable").innerHTML =
+                    "<tr><td colspan='3'>Unable to load food items.</td></tr>";
+            });
+    </script>
+
+</body>
+</html>
